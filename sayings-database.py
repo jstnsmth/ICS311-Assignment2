@@ -281,8 +281,19 @@ class Database:
                        None   : Empty tree
     '''
 
-    #def predecessor(self, saying):
-         
+    def predecessor(self, saying):
+        node = self.sayingsDatabase.search(saying)
+        
+        if node.left is not None:
+            return self.sayingsDatabase.maximum(node.left)
+        else:
+            parent = node.parent
+            tmp = node
+        while parent is not None and tmp is parent.left:
+            tmp = parent
+            parent = tmp.parent
+        return parent
+        
     '''
         Method name:   successor
 
@@ -295,7 +306,18 @@ class Database:
                        None   : Empty tree
     '''
 
-    #def successor(self, saying):
+    def successor(self, saying):
+        node = self.sayingsDatabase.search(saying)
+        
+        if node.right is not None:
+            return self.sayingsDatabase.minimum(node.right)
+        else:
+            parent = node.parent
+            tmp = node
+            while parent is not None and tmp is parent.right:
+                tmp = parent
+                parent = tmp.parent
+            return parent
 
     '''
         Method name:   insert
@@ -344,7 +366,13 @@ class Database:
                        []                 : No results
     '''
 
-    #def withWord(self, word):
+    def withWord(self, word):
+        allSayings = self.sayingsDatabase.inorder_traversal(self.sayingsDatabase.root) # array
+        sayingsWithWord = []
+        for saying in allSayings:
+            if word in saying.english.lower():
+                sayingsWithWord.append(saying)
+        return sayingsWithWord
     
     '''
         Method name:   loadFromFile
@@ -399,3 +427,13 @@ print('meHua() method test:    ',database.meHua('ka'))               # Array of 
 print('                        ',database.meHua('FAIL'), '\n')       # Empty array
 print('withWord() method test: ',database.withWord('past'))          # Array of 1 object address
 print('                        ',database.withWord('FAIL'), '\n')    # False
+
+print('successor() and predessor() test using hawaiian phrases: ')
+for saying in allSayings:
+    predecessor = database.predecessor(saying)
+    successor = database.successor(saying)
+    print('     Saying:   ', saying.hawaiian)
+    if predecessor is not None:
+        print("     Predessor:", predecessor.saying.hawaiian)
+    if successor is not None:
+        print("     Successor:", successor.saying.hawaiian, '\n')
